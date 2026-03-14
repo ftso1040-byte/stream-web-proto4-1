@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炭火焼鰻 結（むすび） | 創業百余年、伝統の味</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        /* ==========================================
+           1. CSS変数・ベーススタイル
+           ========================================== */
+        :root {
+            --bg-color: #F9F8F4; /* 和紙のような温かい白 */
+            --text-color: #2C2B29; /* 墨黒 */
+            --accent-color: #8B2E28; /* 漆赤 */
+            --font-serif: 'Noto Serif JP', serif;
+            --font-sans: 'Zen Kaku Gothic New', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-sans);
+            font-weight: 300;
+            line-height: 1.8;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; /* フォントを美しくレンダリング */
+        }
+
+        h1, h2, h3, .serif {
+            font-family: var(--font-serif);
+            font-weight: 400;
+        }
+
+        /* 縦書き用ユーティリティクラス */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            letter-spacing: 0.2em;
+        }
+
+        /* アニメーション用の初期状態クラス */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* ==========================================
+           2. 各セクションのスタイル
+           ========================================== */
+        
+        /* --- Hero (ファーストビュー) --- */
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero__bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* ▼ GitHub公開時は以下のようにアップロードした画像パスに変更してください
+               background-image: url('./images/Gemini_Generated_Image_rcsazcrcsazcrcsa.jpg'); 
+            */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Unagi_kabayaki_charcoal_grill_by_pelican_in_Katori_Chiba.jpg/1280px-Unagi_kabayaki_charcoal_grill_by_pelican_in_Katori_Chiba.jpg'); 
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.15); /* JSでゆっくりズームアウトさせるための初期値 */
+            z-index: 1;
+        }
+
+        /* 背景を少し暗くして文字を読ませるオーバーレイ */
+        .hero__bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.6), rgba(0,0,0,0.2)); 
+            z-index: 2;
+        }
+
+        .hero__content {
+            position: relative;
+            z-index: 3;
+            color: var(--bg-color);
+            text-align: center;
+            opacity: 0; /* JSでフェードイン */
+        }
+
+        .hero__title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            line-height: 2.5;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        .header-logo {
+            position: absolute;
+            top: 2rem;
+            left: 3rem;
+            z-index: 10;
+            color: var(--bg-color);
+            font-size: 1.8rem;
+            letter-spacing: 0.2em;
+        }
+
+        /* --- 共通セクション設定 --- */
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 5rem;
+            letter-spacing: 0.15em;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 40px;
+            background-color: var(--accent-color);
+            margin: 2rem auto 0;
+        }
+
+        /* --- Concept (こだわり) --- */
+        .concept {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 5rem;
+            padding: 12rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .concept__text-wrapper {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .concept__lead {
+            font-size: 2.2rem;
+            line-height: 2.5;
+            margin-bottom: 3rem;
+            color: var(--accent-color);
+        }
+
+        .concept__desc {
+            font-size: 1rem;
+            line-height: 2.8;
+            letter-spacing: 0.08em;
+        }
+
+        .concept__img-wrapper {
+            flex: 1;
+            height: 80vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .concept__img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.1); /* JSでスクロール連動ズーム */
+        }
+
+        /* --- Menu (お品書き) --- */
+        .menu {
+            padding: 10rem 5%;
+            background-color: #fff; /* 背景色を変えて空間を分ける */
+        }
+
+        .menu__list {
+            max-width: 600px;
+            margin: 0 auto;
+            list-style: none;
+        }
+
+        .menu__item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 2.5rem 0;
+            border-bottom: 1px solid rgba(44, 43, 41, 0.1);
+            opacity: 0; /* JSでフェードイン */
+            transform: translateY(20px);
+        }
+
+        .menu__name {
+            font-size: 1.4rem;
+            letter-spacing: 0.1em;
+        }
+
+        .menu__price {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        /* --- Info (空間・ご案内) --- */
+        .info {
+            padding: 12rem 5%;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .info__img-wrapper {
+            width: 100%;
+            height: 60vh;
+            margin-bottom: 4rem;
+            overflow: hidden;
+        }
+
+        .info__img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.05);
+        }
+
+        /* --- Map --- */
+        .info__map-wrapper {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 4rem;
+        }
+
+        .info__map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: grayscale(30%); /* サイトの雰囲気に合わせて少し彩度を落とす */
+        }
+
+        .info__details {
+            font-size: 1.1rem;
+            line-height: 2.5;
+            letter-spacing: 0.08em;
+        }
+
+        .info__tel {
+            font-size: 2rem;
+            font-family: var(--font-serif);
+            color: var(--accent-color);
+            margin-top: 2rem;
+            display: block;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            text-align: center;
+            padding: 4rem 2rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+        }
+
+        /* --- レスポンシブ対応 (スマホ表示) --- */
+        @media (max-width: 768px) {
+            .concept {
+                flex-direction: column-reverse;
+                padding: 6rem 5%;
+                gap: 3rem;
+            }
+            .concept__img-wrapper {
+                width: 100%;
+                height: 50vh;
+            }
+            .vertical-text {
+                writing-mode: horizontal-tb; /* スマホでは横書きに変更 */
+                letter-spacing: 0.1em;
+            }
+            .hero__title {
+                writing-mode: vertical-rl; /* ファーストビューだけは縦書きを維持 */
+            }
+            .concept__lead {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-logo serif">結</header>
+
+    <section class="hero">
+        <div class="hero__bg"></div>
+        <div class="hero__content">
+            <h1 class="hero__title vertical-text serif">百年のタレと、<br>職人の業。</h1>
+        </div>
+    </section>
+
+    <section class="concept">
+        <div class="concept__text-wrapper">
+            <h2 class="concept__lead vertical-text serif fade-up">炭火の熱が、<br>いのちを吹き込む。</h2>
+            <div class="concept__desc fade-up">
+                <p>創業より百余年、一度も火を絶やすことなく<br>継ぎ足されてきた秘伝のタレ。</p>
+                <br>
+                <p>厳選された国産鰻のみを使用し、<br>紀州備長炭の強い遠赤外線で<br>皮はパリッと、身はふっくらと焼き上げます。</p>
+                <br>
+                <p>職人の手仕事が織りなす、<br>贅を尽くした極上のひとときを<br>心ゆくまでご堪能ください。</p>
+            </div>
+        </div>
+        <div class="concept__img-wrapper fade-up">
+            <!-- ▼ GitHub公開時は src="./images/Gemini_Generated_Image_kvbtn4kvbtn4kvbt.jpg" などに変更してください -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Unaju_by_avlxyz_in_Sydney.jpg/1024px-Unaju_by_avlxyz_in_Sydney.jpg" alt="うな重" class="concept__img">
+        </div>
+    </section>
+
+    <section class="menu">
+        <h2 class="section-title serif fade-up">お品書き</h2>
+        <ul class="menu__list">
+            <li class="menu__item">
+                <span class="menu__name serif">うな重 特上</span>
+                <span class="menu__price">七,五〇〇円</span>
+            </li>
+            <li class="menu__item">
+                <span class="menu__name serif">うな重 松</span>
+                <span class="menu__price">五,八〇〇円</span>
+            </li>
+            <li class="menu__item">
+                <span class="menu__name serif">うな重 竹</span>
+                <span class="menu__price">四,五〇〇円</span>
+            </li>
+            <li class="menu__item">
+                <span class="menu__name serif">白焼き</span>
+                <span class="menu__price">四,〇〇〇円</span>
+            </li>
+            <li class="menu__item">
+                <span class="menu__name serif">うまき</span>
+                <span class="menu__price">一,五〇〇円</span>
+            </li>
+        </ul>
+    </section>
+
+    <section class="info">
+        <h2 class="section-title serif fade-up">空間・ご案内</h2>
+        <div class="info__img-wrapper fade-up">
+            <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80" alt="和室の空間" class="info__img">
+        </div>
+        
+        <!-- Googleマップの埋め込み（サンプルの東京駅周辺） -->
+        <div class="info__map-wrapper fade-up">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.8280303808788!2d139.7645498757007!3d35.68123617258705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bfbd89f700b%3A0x277c49ba34ed38!2z5p2x5Lqs6aeF!5e0!3m2!1sja!2sjp!4v1700000000000!5m2!1sja!2sjp" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div class="info__details fade-up">
+            <p>東京都〇〇区〇〇 1-2-3</p>
+            <p>営業時間：11:30 - 14:00 / 17:00 - 21:00</p>
+            <p>定休日：水曜日</p>
+            <br>
+            <p>ご予約はお電話にて承ります。</p>
+            <span class="info__tel">03-XXXX-XXXX</span>
+        </div>
+    </section>
+
+    <footer>
+        <p class="serif">&copy; 2026 炭火焼鰻 結 All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // GSAPとScrollTriggerの登録
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. サイト読み込み時のアニメーション（ファーストビュー）
+        const tlHero = gsap.timeline();
+        
+        // 背景画像のゆっくりとしたズームアウト（Ken Burnsエフェクト）
+        tlHero.to('.hero__bg', {
+            scale: 1,
+            duration: 12, // 12秒かけてゆっくり動かす
+            ease: 'power1.out'
+        }, 0)
+        // タイトルが和紙にじむように、少し遅れてフェードイン
+        .to('.hero__content', {
+            opacity: 1,
+            y: -20,
+            duration: 3,
+            ease: 'power2.out'
+        }, 1.5);
+
+        // 2. スクロール連動のフェードイン（.fade-up クラスを持つ全要素）
+        gsap.utils.toArray('.fade-up').forEach(element => {
+            gsap.to(element, {
+                scrollTrigger: {
+                    trigger: element,
+                    start: 'top 85%', // 要素が画面の下から15%の位置に来たら開始
+                    toggleActions: 'play none none none' // 一度だけ実行
+                },
+                y: 0,
+                opacity: 1,
+                duration: 1.8,
+                ease: 'power3.out'
+            });
+        });
+
+        // 3. スクロール連動の微細な画像ズーム（パララックス効果）
+        // コンセプト画像
+        gsap.to('.concept__img', {
+            scrollTrigger: {
+                trigger: '.concept__img-wrapper',
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.5 // スクロールに合わせて滑らかに動かす
+            },
+            scale: 1, // 1.1から1へ縮小
+            ease: 'none'
+        });
+
+        // 空間案内画像
+        gsap.to('.info__img', {
+            scrollTrigger: {
+                trigger: '.info__img-wrapper',
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.5
+            },
+            scale: 1,
+            ease: 'none'
+        });
+
+        // 4. メニュー（お品書き）のスタッガー（時間差）表示
+        ScrollTrigger.create({
+            trigger: '.menu__list',
+            start: 'top 80%',
+            onEnter: () => {
+                gsap.to('.menu__item', {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1.2,
+                    stagger: 0.2, // 0.2秒間隔で順番に出現
+                    ease: 'power2.out'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
